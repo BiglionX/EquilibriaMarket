@@ -2,6 +2,17 @@
 
 * { box-sizing: border-box; }
 
+@keyframes kpiPulse {
+  0%   { color: var(--text); transform: scale(1); }
+  20%  { color: var(--ok);    transform: scale(1.08); }
+  100% { color: var(--text); transform: scale(1); }
+}
+
+@keyframes rowFlash {
+  0%   { background-color: rgba(94, 234, 212, 0.18); }
+  100% { background-color: transparent; }
+}
+
 :root {
   --bg: #0f1419;
   --surface: #1a1f2e;
@@ -35,6 +46,7 @@ header {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   box-shadow: var(--shadow);
+  flex-wrap: wrap;
 }
 
 header h1 {
@@ -48,9 +60,54 @@ header h1 {
   color: var(--text-dim);
   font-size: 13px;
   flex: 1;
+  min-width: 200px;
 }
 
-.header-actions { display: flex; align-items: center; gap: 8px; }
+.header__main { display: flex; align-items: baseline; gap: 14px; flex: 1; min-width: 280px; }
+
+.header-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+/* GitHub / README 按钮 */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  transition: background 0.15s, transform 0.1s, border-color 0.15s;
+  cursor: pointer;
+}
+.btn:hover { background: var(--border); border-color: var(--accent); }
+.btn:active { transform: scale(0.97); }
+.btn--gh { background: #24292e; color: #fff; border-color: #24292e; }
+.btn--gh:hover { background: #1b1f23; border-color: var(--accent); }
+.btn--readme { background: var(--surface); }
+.btn--primary {
+  background: var(--accent);
+  color: #042f2e;
+  border-color: var(--accent);
+  font-weight: 600;
+}
+.btn--primary:hover { background: #2dd4bf; border-color: #2dd4bf; }
+.btn--secondary {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border);
+}
+
+/* shields.io 徽章容器 */
+.badge {
+  display: inline-block;
+  text-decoration: none;
+  line-height: 0;
+}
+.badge img { display: block; height: 20px; }
 
 .pill {
   font-size: 12px;
@@ -98,13 +155,47 @@ main {
   color: var(--text-dim);
 }
 
-/* 让基尼图表占满整行 */
-.card:nth-of-type(3) {
+/* 让基尼图表 + 用户表占满整行 */
+.card--full {
   grid-column: 1 / -1;
 }
-.card:nth-of-type(4) {
+
+/* Hero 卡片：项目开源介绍 */
+.card--hero {
   grid-column: 1 / -1;
+  background: linear-gradient(135deg, var(--surface) 0%, rgba(94, 234, 212, 0.04) 100%);
+  border-color: rgba(94, 234, 212, 0.3);
 }
+.card__hero-row {
+  display: flex;
+  gap: 28px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.card__hero-text { flex: 1; min-width: 320px; }
+.card__hero-text p { margin: 0 0 10px; font-size: 14px; line-height: 1.65; }
+.card__hero-text code {
+  background: var(--bg);
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 12px;
+  color: var(--accent);
+}
+.card__hero-cta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 220px;
+}
+.card__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+.card__badges img { height: 20px; display: block; }
 
 /* 表单 */
 form { display: flex; flex-direction: column; gap: 12px; }
@@ -173,6 +264,9 @@ form button:active { transform: translateY(1px); }
 
 .kpi__value--high { color: var(--warning); }
 .kpi__value--critical { color: var(--danger); }
+.kpi__value--pulse {
+  animation: kpiPulse 0.6s ease-out;
+}
 
 /* 图表 */
 .chart-wrap {
@@ -204,14 +298,21 @@ th {
 td { font-family: "JetBrains Mono", Consolas, monospace; }
 .muted { color: var(--text-dim); text-align: center !important; }
 
+tr.row--changed { animation: rowFlash 0.8s ease-out; }
+
 footer {
   text-align: center;
-  padding: 18px;
+  padding: 22px 32px;
   color: var(--text-dim);
   font-size: 12px;
   border-top: 1px solid var(--border);
   margin-top: 32px;
+  background: var(--surface);
 }
+.footer__main { margin-bottom: 8px; color: var(--text); }
+.footer__legal { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.footer__legal a { color: var(--accent); text-decoration: none; }
+.footer__legal a:hover { text-decoration: underline; }
 
 @media (max-width: 880px) {
   main { grid-template-columns: 1fr; }

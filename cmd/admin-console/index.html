@@ -3,21 +3,83 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Equilibria Admin Console</title>
+  <title>Equilibria Admin Console · Open Source</title>
+  <meta name="description" content="基于 AI 经济学原理的多方市场调度引擎 — 开源、MIT License、Go 实现" />
   <link rel="stylesheet" href="/static/style.css" />
   <!-- Chart.js (CDN) -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
   <header>
-    <h1>Equilibria Admin Console</h1>
-    <span class="subtitle">基于 AI 经济学原理的多方市场调度引擎</span>
+    <div class="header__main">
+      <h1>Equilibria Admin Console</h1>
+      <span class="subtitle">基于 AI 经济学原理的多方市场调度引擎</span>
+    </div>
     <div class="header-actions">
+      <!-- 开源徽章（动态渲染自 shields.io） -->
+      <a class="badge" href="https://github.com/BiglionX/EquilibriaMarket/blob/main/LICENSE" target="_blank" rel="noopener" title="MIT License">
+        <img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square" alt="MIT License" />
+      </a>
+      <a class="badge" href="https://github.com/BiglionX/EquilibriaMarket" target="_blank" rel="noopener" title="GitHub Stars">
+        <img src="https://img.shields.io/github/stars/BiglionX/EquilibriaMarket?style=flat-square&logo=github" alt="GitHub Stars" />
+      </a>
+      <a class="btn btn--gh" href="https://github.com/BiglionX/EquilibriaMarket" target="_blank" rel="noopener" title="在 GitHub 上查看完整 README">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+        </svg>
+        <span>GitHub</span>
+      </a>
+      <a class="btn btn--readme" href="https://github.com/BiglionX/EquilibriaMarket#readme" target="_blank" rel="noopener" title="查看完整 README">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <path d="M0 1.75A.75.75 0 01.75 1h4.253c1.227 0 2.317.59 3 1.501A3.744 3.744 0 0111.006 1h4.245a.75.75 0 01.75.75v10.5a.75.75 0 01-.75.75h-4.507a2.25 2.25 0 00-1.591.659l-.622.621a.75.75 0 01-1.06 0l-.622-.621A2.25 2.25 0 005.258 13H.75a.75.75 0 01-.75-.75V1.75zm7.251 12a1.25 1.25 0 00-1.25 1.25V14H2v-2.5a.25.25 0 01.25-.25h4.501a.25.25 0 01.25.25v.75c0 .69.56 1.25 1.25 1.25zM8 5.75A.75.75 0 018 4.5h.5a.75.75 0 010 1.5H8zm0 3a.75.75 0 01-.75-.75v-.5a.75.75 0 011.5 0v.5A.75.75 0 018 8.75zm1.5-3a.75.75 0 000-1.5H9a.75.75 0 000 1.5h.5zM8 11.5a.75.75 0 01-.75-.75v-.5a.75.75 0 011.5 0v.5A.75.75 0 018 11.5zm1.5-3a.75.75 0 000-1.5H9a.75.75 0 000 1.5h.5z"/>
+        </svg>
+        <span>README</span>
+      </a>
       <span id="health-pill" class="pill pill--pending">● 等待</span>
     </div>
   </header>
 
   <main>
+    <!-- README 入口卡片：项目核心信息 -->
+    <section class="card card--hero">
+      <div class="card__hero-row">
+        <div class="card__hero-text">
+          <h2>开源 · Open Source</h2>
+          <p>
+            EquilibriaMarket 是一个<strong>多方注意力市场调度引擎</strong>，
+            实现 Vickrey 第二价格拍卖 + 可插拔治理插件 + 基尼系数监控。
+            理论基础来自 Michael I. Jordan（2018 NeurIPS Keynote）
+            关于"AI 与经济学融合"的研究方向。
+          </p>
+          <p class="muted">
+            本页是 Demo 模式（前端 mock 数据）。
+            真实部署请使用 <code>cmd/admin-console</code>（Go + Gin 后端）。
+          </p>
+        </div>
+        <div class="card__hero-cta">
+          <a class="btn btn--primary" href="https://github.com/BiglionX/EquilibriaMarket" target="_blank" rel="noopener">
+            ⭐ 在 GitHub 上查看
+          </a>
+          <a class="btn btn--secondary" href="https://github.com/BiglionX/EquilibriaMarket/blob/main/README.md" target="_blank" rel="noopener">
+            📖 阅读完整 README
+          </a>
+          <a class="btn btn--secondary" href="https://github.com/BiglionX/EquilibriaMarket/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">
+            🤝 贡献指南
+          </a>
+          <a class="btn btn--secondary" href="https://github.com/BiglionX/EquilibriaMarket/blob/main/SECURITY.md" target="_blank" rel="noopener">
+            🔒 安全策略
+          </a>
+        </div>
+      </div>
+      <div class="card__badges">
+        <img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square" alt="License: MIT" />
+        <img src="https://img.shields.io/badge/Go-1.25-00ADD8.svg?style=flat-square&logo=go&logoColor=white" alt="Go 1.25" />
+        <img src="https://img.shields.io/badge/framework-Gin-008080.svg?style=flat-square" alt="Gin" />
+        <img src="https://img.shields.io/badge/Vercel-deployed-000000.svg?style=flat-square&logo=vercel&logoColor=white" alt="Vercel" />
+        <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square" alt="PRs welcome" />
+      </div>
+    </section>
+
     <!-- 左列：发行货币 + 用户列表 -->
     <section class="card">
       <h2>发行货币</h2>
@@ -78,7 +140,7 @@
       </div>
     </section>
 
-    <section class="card">
+    <section class="card card--full">
       <h2>基尼系数 · 实时柱状图</h2>
       <p class="card__hint">
         每次后端状态变化后自动刷新。历史采样保留最近 <span id="sample-cap">30</span> 个点。
@@ -91,7 +153,7 @@
       </p>
     </section>
 
-    <section class="card">
+    <section class="card card--full">
       <h2>用户余额（Top 10）</h2>
       <table id="users-table">
         <thead>
@@ -105,7 +167,18 @@
   </main>
 
   <footer>
-    <span>EquilibriaMarket · Phase 1 MVP · Go + Gin + Chart.js</span>
+    <div class="footer__main">
+      <span><strong>EquilibriaMarket</strong> · Phase 1 MVP · Go + Gin + Chart.js</span>
+    </div>
+    <div class="footer__legal">
+      <span>© 2026 BiglionX</span>
+      <span>·</span>
+      <a href="https://github.com/BiglionX/EquilibriaMarket/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>
+      <span>·</span>
+      <a href="https://github.com/BiglionX/EquilibriaMarket" target="_blank" rel="noopener">Source</a>
+      <span>·</span>
+      <a href="https://github.com/BiglionX/EquilibriaMarket/issues" target="_blank" rel="noopener">Issues</a>
+    </div>
   </footer>
 
   <script src="/static/app.js"></script>
