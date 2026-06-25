@@ -5,6 +5,12 @@
   "public": true,
   "cleanUrls": true,
   "trailingSlash": false,
+  "builds": [
+    {
+      "src": "**/*",
+      "use": "@vercel/static"
+    }
+  ],
   "headers": [
     {
       "source": "/static/(.*)",
@@ -21,8 +27,5 @@
         { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self';" }
       ]
     }
-  ],
-  "rewrites": [
-    { "source": "/static/(.*)", "destination": "/static/$1" }
   ]
 }
