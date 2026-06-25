@@ -2,7 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "name": "equilibria-admin-console-demo",
   "version": 2,
-  "public": true,
   "cleanUrls": true,
   "trailingSlash": false,
   "builds": [
