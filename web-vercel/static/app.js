@@ -46,25 +46,49 @@ function initMockData() {
   lastUpdate = Date.now();
 }
 
-// ===== Mock 数据演化（无 mint 时缓慢漂移） =====
+// ===== Mock 数据演化（每次 tick 都有可见变化） =====
 function evolveMockData() {
   const now = Date.now();
   const elapsed = now - lastUpdate;
-  // 每 30 秒：随机给某个用户加一点币（模拟"持续发行"）
-  if (elapsed > 30000) {
-    const idx = Math.floor(Math.random() * users.length);
-    users[idx].balance += Math.floor(Math.random() * 200) + 50;
-    lastUpdate = now;
+
+  // 1) 持续通胀：每 tick 给非零账户 0~4 的小额 mint（模拟"广告收入"持续进入）
+  for (const u of users) {
+    if (u.balance > 0) {
+      u.balance += Math.random() * 4;
+    } else {
+      // 零账户偶尔被 mint 进入（5% 概率）
+      if (Math.random() < 0.05) {
+        u.balance = Math.floor(Math.random() * 50) + 10;
+      }
+    }
   }
-  // 偶发：模拟一次"鲸鱼出场"
-  if (Math.random() < 0.03) {
-    const idx = Math.floor(Math.random() * users.length);
-    users[idx].balance += Math.floor(Math.random() * 5000) + 1000;
+  lastUpdate = now;
+
+  // 2) 模拟 Vickrey 拍卖转账：每 tick 发生 1~3 笔
+  //    每次随机选两个不同用户，从"出价高者"转给"出价低者"（缩小贫富差距）
+  const txCount = 1 + Math.floor(Math.random() * 3);
+  for (let i = 0; i < txCount; i++) {
+    const sorted = [...users].sort((a, b) => b.balance - a.balance);
+    const from = sorted[Math.floor(Math.random() * Math.min(3, sorted.length))];  // top-3 富者
+    const to = sorted[sorted.length - 1 - Math.floor(Math.random() * Math.min(3, sorted.length))];  // bottom-3
+    if (!from || !to || from === to) continue;
+    const amount = Math.floor(Math.random() * 30) + 5;
+    if (from.balance >= amount) {
+      from.balance -= amount;
+      to.balance += amount;
+    }
   }
-  // 偶发：模拟一次"小崩盘"
-  if (Math.random() < 0.02) {
+
+  // 3) 偶发"鲸鱼出场"（8% 概率）：随机一个用户 +500~5000
+  if (Math.random() < 0.08) {
     const idx = Math.floor(Math.random() * users.length);
-    users[idx].balance = Math.max(0, users[idx].balance - Math.floor(Math.random() * 300));
+    users[idx].balance += Math.floor(Math.random() * 4500) + 500;
+  }
+
+  // 4) 偶发"小崩盘"（5% 概率）：随机一个用户 -100~500
+  if (Math.random() < 0.05) {
+    const idx = Math.floor(Math.random() * users.length);
+    users[idx].balance = Math.max(0, users[idx].balance - Math.floor(Math.random() * 400) + 100);
   }
 }
 
@@ -234,6 +258,14 @@ function initChart() {
 }
 
 // ===== 渲染 =====
+let prevMetrics = null;
+function pulseEl(el) {
+  el.classList.remove("kpi__value--pulse");
+  // 触发重排后再加 class，确保动画重新播放
+  void el.offsetWidth;
+  el.classList.add("kpi__value--pulse");
+}
+
 function renderKpis(m) {
   $("kpi-gini").textContent = fmtFloat(m.gini, 3);
   $("kpi-gini").className = "kpi__value";
@@ -247,6 +279,18 @@ function renderKpis(m) {
   $("kpi-median").textContent = fmtFloat(m.median, 1);
   $("kpi-top").textContent = fmtPct(m.top_concentration_top_n);
   $("kpi-updated").textContent = fmtTime(m.timestamp) + " (" + fmtRelative(m.timestamp) + ")";
+
+  // 数据变化时短暂高亮（绿色脉冲），让"动态"看得见
+  if (prevMetrics) {
+    const changed = ["gini", "total_supply", "mean", "median", "top_concentration_top_n"];
+    for (const k of changed) {
+      if (Math.abs((m[k] || 0) - (prevMetrics[k] || 0)) > 0.001) {
+        const el = $("kpi-" + k.replace("top_concentration_top_n", "top").replace("_supply", "-supply").replace("accounts", "accounts").replace("active", "active"));
+        if (el) pulseEl(el);
+      }
+    }
+  }
+  prevMetrics = m;
 }
 
 function pushHistory(m) {
@@ -273,16 +317,24 @@ function renderUsers(payload) {
     tbody.innerHTML = `<tr><td colspan="3" class="muted">暂无数据</td></tr>`;
     return;
   }
+  // 记录上一次渲染的余额（按 user_id 索引），用于检测"变化"并高亮
+  const prevBalances = (renderUsers._prev) || {};
   const total = list.reduce((s, u) => s + u.balance, 0);
   const rows = list.map((u) => {
     const pct = total > 0 ? (u.balance / total * 100).toFixed(1) + "%" : "—";
-    return `<tr>
+    const changed = prevBalances[u.user_id] !== undefined &&
+                    Math.abs(prevBalances[u.user_id] - u.balance) > 0.5;
+    return `<tr class="${changed ? "row--changed" : ""}">
       <td>${escapeHtml(u.user_id)}</td>
       <td>${fmtInt(u.balance)}</td>
       <td>${pct}</td>
     </tr>`;
   }).join("");
   tbody.innerHTML = rows;
+  // 保存当前快照
+  const next = {};
+  for (const u of list) next[u.user_id] = u.balance;
+  renderUsers._prev = next;
 }
 
 function renderHealth(data) {
