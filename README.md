@@ -122,7 +122,77 @@ $$
 | Prebid mock 入口 | `cmd/prebid-mock` | ✅ 完成 |
 | Admin Web 控制台 | `cmd/admin-console` | ✅ 完成（Gin + Chart.js） |
 | 单元测试 | 50+ 用例 | ✅ 全部通过 |
-| 基准测试 | `BenchmarkSecondPriceAuction` | ✅ ~1.6 μs/op (611K QPS) |
+| 基准测试 | `BenchmarkSecondPriceAuction` | ✅ ~1.6 μs/op (611K QPS) | |
+
+---
+
+## 🚀 5 分钟集成（纯 Go 库，零 API）
+
+**最快上手方式** —— 不写一行 HTTP / API，直接 `go run` 跑一次完整的拍卖 + 结算 + 治理记账 + 基尼系数：
+
+```bash
+git clone git@github.com:BiglionX/EquilibriaMarket.git
+cd EquilibriaMarket
+go run ./examples/run-auction
+```
+
+输出（约 1 秒）：
+
+```
+[A] 撮合结果
+    胜出者     : DSP-Alpha
+    清算价     : 4.21 (第二高价 + 0.01，激励相容)
+
+[B] 结算明细
+    胜出者实付  : 4.21
+    创作者分账  : 4.21 → creator-zoe
+    胜出者余额  : 4579
+    创作者余额  : 421
+
+[D] 基尼系数
+    Gini       = 0.326
+```
+
+### 我能直接用什么？需要写什么？
+
+| 直接可用（零代码） | 需要适配（业务相关） |
+|---|---|
+| `pkg/types` — BidRequest / BidResponse / AuctionResult | 真实流量源对接（改 cmd/marketd 路由） |
+| `pkg/engine` — Vickrey 拍卖 + MarketMaker | 自定义治理规则（实现 `governance.Plugin` 接口） |
+| `pkg/governance/centralized` — 中心化记账插件 | 自定义"注意力币"（改 AttentionCurrency） |
+| `pkg/metrics` — 基尼系数 / 洛伦兹曲线 / Top-N 集中度 | 持久层（现默认 in-memory） |
+| `cmd/marketd` — OpenRTB 风格 HTTP 端点 | 认证 / 鉴权（加 middleware） |
+| `cmd/admin-console` — Web UI（Gin + Chart.js） | UI 定制（修改 index.html / app.js） |
+| `adapters/prebid` — Prebid Server 集成 | — |
+
+### 嵌入到自己的服务
+
+```go
+import (
+    "github.com/BiglionX/EquilibriaMarket/pkg/engine"
+    "github.com/BiglionX/EquilibriaMarket/pkg/governance/centralized"
+    "github.com/BiglionX/EquilibriaMarket/pkg/types"
+)
+
+plugin := centralized.New(centralized.DefaultConfig())
+mm := engine.NewMarketMaker(
+    engine.AuctioneerFunc(engine.SecondPriceAuction),
+    plugin,
+)
+
+req := types.BidRequest{SlotID: "slot-homepage-banner", FloorPrice: 1.0}
+bids := []types.BidResponse{
+    {BidderID: "DSP-A", ContentID: "ad-001", Bid: 5.00},
+    {BidderID: "DSP-B", ContentID: "ad-001", Bid: 3.00},
+}
+
+result, settle, err := mm.HandleBidRequest(ctx, req, bids)
+// result.WinnerID    → 胜出者
+// result.ClearPrice  → 清算价
+// settle.SponsorPaid / CreatorPayout / Tax
+```
+
+**~15 行代码**完成整套拍卖 + 三段式结算。完整示例见 [examples/run-auction/main.go](./examples/run-auction/main.go)。
 
 ---
 
