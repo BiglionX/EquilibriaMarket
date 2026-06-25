@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Equilibria Admin Console</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <!-- Chart.js (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Equilibria Admin Console</h1>
+    <span class="subtitle">基于 AI 经济学原理的多方市场调度引擎</span>
+    <div class="header-actions">
+      <span id="health-pill" class="pill pill--pending">● 等待</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- 左列：发行货币 + 用户列表 -->
+    <section class="card">
+      <h2>发行货币</h2>
+      <form id="mint-form">
+        <label>
+          用户 ID
+          <input type="text" id="mint-user" value="alice" required />
+        </label>
+        <label>
+          数量（注意力币）
+          <input type="number" id="mint-amount" value="1000" min="1" step="1" required />
+        </label>
+        <label>
+          原因
+          <input type="text" id="mint-reason" value="admin grant" />
+        </label>
+        <button type="submit">发行</button>
+        <p id="mint-result" class="result"></p>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>总览指标</h2>
+      <div class="kpi-grid">
+        <div class="kpi">
+          <span class="kpi__label">基尼系数</span>
+          <span class="kpi__value" id="kpi-gini">—</span>
+          <span class="kpi__hint">0=平等 · 1=极端</span>
+        </div>
+        <div class="kpi">
+          <span class="kpi__label">总账户</span>
+          <span class="kpi__value" id="kpi-accounts">—</span>
+        </div>
+        <div class="kpi">
+          <span class="kpi__label">活跃账户</span>
+          <span class="kpi__value" id="kpi-active">—</span>
+        </div>
+        <div class="kpi">
+          <span class="kpi__label">总发行量</span>
+          <span class="kpi__value" id="kpi-supply">—</span>
+        </div>
+        <div class="kpi">
+          <span class="kpi__label">平均余额</span>
+          <span class="kpi__value" id="kpi-mean">—</span>
+        </div>
+        <div class="kpi">
+          <span class="kpi__label">中位数</span>
+          <span class="kpi__value" id="kpi-median">—</span>
+        </div>
+        <div class="kpi">
+          <span class="kpi__label">Top-10 占比</span>
+          <span class="kpi__value" id="kpi-top">—</span>
+        </div>
+        <div class="kpi">
+          <span class="kpi__label">更新时间</span>
+          <span class="kpi__value kpi__value--small" id="kpi-updated">—</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>基尼系数 · 实时柱状图</h2>
+      <p class="card__hint">
+        每次后端状态变化后自动刷新。历史采样保留最近 <span id="sample-cap">30</span> 个点。
+      </p>
+      <div class="chart-wrap">
+        <canvas id="gini-chart" height="120"></canvas>
+      </div>
+      <p class="card__legend">
+        柱高 = 当前基尼系数。虚线 = 0.4 警戒阈值（经验值，高于此值需关注公平性）。
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>用户余额（Top 10）</h2>
+      <table id="users-table">
+        <thead>
+          <tr><th>用户 ID</th><th>余额</th><th>占比</th></tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="3" class="muted">加载中…</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+    <span>EquilibriaMarket · Phase 1 MVP · Go + Gin + Chart.js</span>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

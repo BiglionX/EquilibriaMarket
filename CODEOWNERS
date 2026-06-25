@@ -1,0 +1,17 @@
+# Code Owners
+
+This file defines who must approve changes to specific areas of the codebase.
+
+# Default: all changes require review from a maintainer
+*                       @BiglionX
+
+# Engine core: extra scrutiny for protocol-changing PRs
+/pkg/engine/           @BiglionX
+/pkg/governance/       @BiglionX
+/pkg/types/            @BiglionX
+
+# Adapters: external integrations need API stability review
+/adapters/             @BiglionX
+
+# Frontend: review by whoever has bandwidth
+/cmd/admin-console/    @BiglionX

@@ -1,0 +1,66 @@
+# ===== 编译产物 =====
+# Go binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# 单独构建的二进制
+/marketd.exe
+/prebid-mock.exe
+/admin-console.exe
+/equilibria-engine
+
+# ===== 测试/调试产物 =====
+# 测试输出
+*.test
+*.out
+
+# Coverage profile
+coverage.txt
+coverage.html
+*.coverprofile
+
+# Benchmark output
+*.bench
+
+# ===== 日志与临时文件 =====
+*.log
+*.err
+.tmp/
+tmp/
+*.pid
+
+# ===== 截图 / 多媒体 =====
+*.png
+!docs/**/*.png
+!docs/**/*.jpg
+!docs/**/*.svg
+!web/**/*.png
+
+# ===== IDE / 编辑器 =====
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ===== Go 工具链 =====
+# 不要忽略 go.mod 和 go.sum
+# go.work (如使用)
+
+# ===== 本地配置 =====
+.env
+.env.local
+config.local.yaml
+config.local.json
+*.local
+
+# ===== 敏感数据 =====
+*.key
+*.pem
+secrets/
